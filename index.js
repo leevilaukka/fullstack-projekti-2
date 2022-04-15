@@ -14,7 +14,6 @@ app.use("/", require("./routes/home"));
 app.use("/weather", require("./routes/weather"));
 app.use("/forecast", require("./routes/forecast"));
 
-
 app.listen(port, () => {
     console.log(`Weather app listening on port ${port}`)
 })

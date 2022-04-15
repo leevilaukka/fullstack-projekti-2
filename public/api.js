@@ -73,4 +73,4 @@ class API {
     }
 }
 
-module.exports = new API("qAhRyugg0nYOZGJZKNipekGXMO3lbY7a");
+module.exports = new API(process.env.API_KEY);
