@@ -1,0 +1,64 @@
+<%- include("partials/header.ejs")  %> 
+
+<script>
+    window.addEventListener("load", () => {
+        const city = JSON.parse(localStorage.getItem('city'));
+        const error = document.getElementById('error');
+
+        error.style.display = 'none';
+        console.log(city)
+     
+        if (city) {
+            document.getElementById('nocity').style.display = 'none';
+
+            // Fecth the weather data
+            fetch('/weather/currentWeather?cityKey=' + city.Key).then((response) => {
+                response.json().then((data) => {
+                    data = data[0];
+
+                    if (data.error) {
+                        console.error(data.error);
+                        error.style.display = 'block';
+                        document.getElementById('errorHeading').textContent = data.error.name;
+                        document.getElementById('errorMessage').textContent = data.error.message;
+                    } else {
+                        const imageURL = `https://developer.accuweather.com/sites/default/files/0${data.WeatherIcon}-s.png`
+
+                        console.log(data)
+                        document.getElementById('city').textContent = city.EnglishName;
+                        document.getElementById('link').href = data.Link;
+                        document.getElementById('temp').textContent = data.Temperature.Metric.Value + '°C';
+                        document.getElementById('type').textContent = data.WeatherText;
+                        document.getElementById('icon').src = imageURL;
+                        document.getElementById("time").textContent = `Päivitetty viimeksi klo ${new Date(data.LocalObservationDateTime).toLocaleTimeString("fi-FI", {hour: '2-digit', minute: '2-digit'})}`;
+                    }
+                });
+            });
+        } else {
+            console.log('No city');
+            document.getElementById('nocity').style.display = 'block';
+        }
+    });
+</script>
+
+<div id="nocity">
+    <%- include("partials/noCity") %> 
+</div>
+
+<div id="error" class="text-center">
+    <h3 id="errorHeading"></h3>
+    <p id="errorMessage"></p>
+</div>
+
+<div id="weather" class="text-center">
+    <h1 class="text-center" id="city"></h1>
+    <p id="time"></p>
+    <h3 id="temp"></h3>
+    <p id="type"></p>
+    <img class="img-thumbnail rounded mx-auto d-block" id="icon">
+    <a id="link" href="">Sään tarjoaa AccuWeather</a>
+</div>
+
+
+
+

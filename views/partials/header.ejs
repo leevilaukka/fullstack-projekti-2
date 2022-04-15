@@ -1,0 +1,58 @@
+<link rel="stylesheet" href="bootstrap.min.css">
+
+<script>
+  window.addEventListener("load", () => {
+      const form = document.getElementById('weather-form');
+      const cityInput = document.getElementById('cityinput');
+      const storedCity = JSON.parse(localStorage.getItem('city'));
+      const currentCity = document.getElementById('currentCity');
+      
+      if (storedCity) {
+          currentCity.textContent = `Valittu kaupunki: ${storedCity.EnglishName}`;
+      }
+
+      form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const city = document.getElementById('cityinput').value;
+          const url = `/weather/city?city=${city}`;
+          fetch(url).then((response) => {
+              response.json().then((data) => {
+                  console.log(data);
+                  if (data.error) {
+                      console.error(data.error);
+                  } else {
+                      localStorage.setItem('city', JSON.stringify(data[0]));
+                      location.reload();
+                  }
+              });
+          });
+      });
+  });
+</script>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link mx-2" href="/weather">Sää</a>
+      </li>
+      <li class="nav-item pr-2">
+        <a class="nav-link mx-2" href="/forecast">Ennuste</a>
+      </li>
+      
+      <li class="nav-item d-flex align-middle">
+          <p id="currentCity" class="navbar-text mx-2"></p>
+      </li>
+
+        
+    </ul>
+    <form id="weather-form" class="form-inline d-flex align-middle">
+      <input id="cityinput" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </nav>
+
+  

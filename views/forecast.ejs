@@ -1,0 +1,87 @@
+<%- include("partials/header.ejs")  %> 
+
+<script>
+    window.addEventListener("load", () => {
+        const city = JSON.parse(localStorage.getItem('city'));
+        const toCelsius = (fahrenheit) => {
+            return Math.round((fahrenheit - 32) * 5 / 9);
+        }
+        const weatherContainer = document.getElementById('weatherContainer')
+        if (city) {
+            document.getElementById('nocity').style.display = 'none';
+
+            // Hae sääennusteet apista
+            fetch('/weather/forecast?cityKey=' + city.Key).then((response) => {
+                response.json().then((data) => {
+
+                    // Virheenhallinta
+                    if(data.error){
+                        error.style.display = 'block';
+                        document.getElementById('errorHeading').textContent = data.error.name;
+                        document.getElementById('errorMessage').textContent = data.error.message;
+                    } else {
+                        console.log(data)
+                        const tableBody = document.getElementById('tablebody');
+                        const headline = document.getElementById('headline');
+                        document.getElementById('city').textContent = city.EnglishName;
+                        headline.textContent = data.Headline.Text;
+                        document.getElementById("link").href = data.Headline.Link;
+
+                        // Rivi jokaiselle päivälle
+                        data.DailyForecasts.forEach(forecast => {
+                            const forecastRow = document.createElement('tr');
+                            forecastRow.classList.add('forecast-row');
+
+                            const date = new Date(forecast.Date);
+                            const dateString = date.toLocaleDateString("fi-FI");
+
+                            const imageURL = `https://developer.accuweather.com/sites/default/files/0${forecast.Day.Icon}-s.png`;
+
+                            forecastRow.innerHTML = `
+                                <td class="forecast-date">${dateString}</div>
+                                <td class="forecast-desc">${forecast.Day.IconPhrase}</td>
+                                <td class="forecast-icon"><img src="${imageURL}"></div>
+                                <td class="forecast-temp">${toCelsius(forecast.Temperature.Minimum.Value)}°C / ${toCelsius(forecast.Temperature.Maximum.Value)}°C</div>
+                            `;
+
+                            tableBody.appendChild(forecastRow);
+                        });
+                    }
+                });
+            });
+        } else {
+            console.log('No city');
+        }
+    });
+</script>
+
+<div id="nocity">
+    <%- include("partials/noCity") %> 
+</div>
+
+<div id="error" class="text-center">
+    <h3 id="errorHeading"></h3>
+    <p id="errorMessage"></p>
+</div>
+
+<div id="forecast">
+    <div class="text-center">
+        <h2 id="city"></h2>
+        <h3 id="headline"></h3>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Päivä</th>
+                <th>Kuvaus</th>
+                <th>Kuvake</th>
+                <th>Lämpötila</th>
+            </tr>
+        </thead>
+        <tbody id="tablebody">
+            <!--Tähän tulee säätietorivit-->
+        </tbody>
+    </table>
+    <a id="link" class="text-center">Ennusteet tarjoaa AccuWeather</p>
+</div>
