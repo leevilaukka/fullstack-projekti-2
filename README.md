@@ -1,4 +1,4 @@
-# guestbook
+# Sää-sovellus
 Sää-sovellus Fullstack-ohjelmointi-kurssia varten
 
 API: https://developer.accuweather.com/apis
