@@ -6,6 +6,9 @@
       const cityInput = document.getElementById('cityinput');
       const storedCity = JSON.parse(localStorage.getItem('city'));
       const currentCity = document.getElementById('currentCity');
+      const navError = document.getElementById('naverror');
+
+      navError.style.display = 'none';
       
       if (storedCity) {
           currentCity.textContent = `Valittu kaupunki: ${storedCity.EnglishName}`;
@@ -20,6 +23,9 @@
                   console.log(data);
                   if (data.error) {
                       console.error(data.error);
+                      
+                      navError.style.display = 'block';
+                      navError.innerHTML = `<p>${data.error.name} | ${data.error.message}</p>`;
                   } else {
                       localStorage.setItem('city', JSON.stringify(data[0]));
                       location.reload();
@@ -53,6 +59,10 @@
       <input id="cityinput" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form>
+  </div>
+  <div id="naverror">
+
+  </div>
   </nav>
 
   
